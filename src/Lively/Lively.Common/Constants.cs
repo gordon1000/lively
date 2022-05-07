@@ -50,7 +50,7 @@ namespace Lively.Common
         public static class ApplicationType
         {
             public static bool IsMSIX { get; } = new DesktopBridge.Helpers().IsRunningAsUwp();
-            public static ClientType Client { get; } = ClientType.winui;
+            public static ClientType Client { get; } = ClientType.wpf;
             //todo: make compile-time flag.
             public static bool IsTestBuild { get; } = true;
         }
