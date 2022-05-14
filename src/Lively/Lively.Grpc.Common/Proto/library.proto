@@ -1,0 +1,118 @@
+﻿syntax = "proto3";
+package Lively.Grpc.Common.Proto.Library;
+import "google/protobuf/empty.proto";
+
+service LibraryService
+{
+	rpc DeleteWallpaper (LibraryModel) returns (google.protobuf.Empty);
+	rpc ExportWallpaper (ExportWallpaperRequest) returns (google.protobuf.Empty);
+	rpc ShowWallpaperOnDisk (LibraryModel) returns (google.protobuf.Empty);
+	rpc AddWallpaperFile (AddWallpaperFileRequest) returns (LibraryModel);
+	rpc AddWallpaperLink (AddWallpaperLinkRequest) returns (LibraryModel);
+	rpc AddWallpapers (AddWallpapersRequest) returns (stream Progress);
+	rpc CancelAddWallpaper (google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc SearchWallpapers (SearchWallpapersRequest) returns (stream SearchWallpapersResponse);
+}
+
+message ExportWallpaperRequest
+{
+	LibraryModel libraryItem = 1;
+	string saveFile = 2;
+}
+
+message AddWallpaperFileRequest
+{
+	string filePath = 1;
+}
+
+message AddWallpaperLinkRequest
+{
+	string url = 1;
+}
+
+message AddWallpapersRequest
+{
+	repeated string files = 1;
+}
+
+message Progress
+{
+	repeated int32 Percentage = 1;
+}
+
+message SearchWallpapersRequest
+{
+	string query = 1;
+	int32 pageNumber = 2;
+	int32 resultPerPage = 3;
+}
+
+message SearchWallpapersResponse
+{
+	repeated LibraryModel libraryItems = 1;
+}
+
+message LibraryModel
+{
+	string filePath = 1;
+	string imagePath = 2;
+	string srcWebsite = 3;
+	enum LibraryItemType
+	{
+		UNKNOWN = 0;
+		PROCESSING = 1;
+		READY = 2;
+		CMDIMPORT = 3;
+		MULTIIMPORT = 4;
+		EDIT = 5;
+	}
+	LibraryItemType dataType = 4;
+
+	string title = 5;
+	string desc = 6;
+	string author = 7;
+
+	string livelyInfoFolderPath = 8;
+	LivelyInfoModel livelyInfo = 9;
+
+	string livelyPropertyPath = 10;
+	string previewClipPath = 11;
+	string thumbnailPath = 12;
+
+	bool itemStartup = 13;
+}
+
+message LivelyInfoModel
+{
+	enum WallpaperType
+	{
+		UNKNOWN = 0;
+		APP = 1;
+		WEB = 2;
+		WEBAUDIO = 3;
+		//[Description("Webpage Link")] //"Type" tab only = ; not for "Library"! 
+		URL = 4;
+		BIZHAWK = 5;
+		UNITY = 6;
+		GODOT = 7;
+		VIDEO = 8;
+		GIF = 9;
+		//backward compatibility with lively pre v1.0
+		UNITYAUDIO = 10;
+		VIDEOSTREAM = 11;
+		PICTURE = 12;
+	}
+	WallpaperType type = 1;
+	string fileName = 2;
+	bool isAbsolutePath = 3;
+	string title = 4;
+
+	string appVersion = 5;
+	string arguments = 6;
+	string author = 7;
+	string contact = 8;
+	string desc = 9;
+	string license = 10;
+	string preview = 11;
+	string thumbnail = 12;
+}
