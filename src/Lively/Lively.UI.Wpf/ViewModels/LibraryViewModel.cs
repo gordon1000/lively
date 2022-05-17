@@ -25,15 +25,18 @@ namespace Lively.UI.Wpf.ViewModels
         private readonly IDesktopCoreClient desktopCore;
         private readonly IUserSettingsClient userSettings;
         private readonly IDisplayManagerClient displayManager;
+        private readonly ILibraryManagerClient libraryManager;
         private readonly SettingsViewModel settingsVm;
 
         public LibraryViewModel(IDesktopCoreClient desktopCore,
             IDisplayManagerClient displayManager,
+            ILibraryManagerClient libraryManager,
             IUserSettingsClient userSettings,
             SettingsViewModel settingsVm)
         {
             this.desktopCore = desktopCore;
             this.displayManager = displayManager;
+            this.libraryManager = libraryManager;
             this.userSettings = userSettings;
             this.settingsVm = settingsVm;
 
@@ -57,6 +60,7 @@ namespace Lively.UI.Wpf.ViewModels
 
             desktopCore.WallpaperChanged += DesktopCore_WallpaperChanged;
             settingsVm.WallpaperDirChanged += SettingsVm_WallpaperDirChanged;
+            libraryManager.LibraryCollectionChanged += LibraryManager_LibraryCollectionChanged;
         }
 
         #region collections
@@ -164,6 +168,18 @@ namespace Lively.UI.Wpf.ViewModels
             }
             return libItem;
         }
+
+        private void LibraryManager_LibraryCollectionChanged(object sender, List<ILibraryModel> eventArgs)
+        {
+            App.Current.Dispatcher.Invoke((Action) delegate
+            {
+                foreach (var item in eventArgs)
+                {
+                    LibraryItems.Insert(BinarySearch(LibraryItems, item.Title), (LibraryModel)item);
+                }
+            });
+        }
+
 
         /// <summary>
         /// Load wallpapers from the given parent folder(), only top directory is scanned.

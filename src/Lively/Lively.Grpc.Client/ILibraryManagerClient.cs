@@ -2,17 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lively.Core.Library
+namespace Lively.Grpc.Client
 {
-    public interface ILibraryManager : IDisposable
+    public interface ILibraryManagerClient : IDisposable
     {
-        ObservableCollection<ILibraryModel> LibraryItems { get; }
-
         Task<ILibraryModel> AddWallpaper(string folderPath, bool processing = false);
         Task<ILibraryModel> AddWallpaperFile(string filePath);
         Task<ILibraryModel> AddWallpaperLink(string url);
@@ -23,5 +20,7 @@ namespace Lively.Core.Library
         Task ExportWallpaper(ILibraryModel libraryItem, string saveFile);
 
         Task ShowWallpaperOnDisk(ILibraryModel libraryItem);
+
+        event EventHandler<List<ILibraryModel>> LibraryCollectionChanged;
     }
 }

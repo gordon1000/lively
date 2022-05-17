@@ -24,16 +24,20 @@ namespace Lively.UI.Wpf.ViewModels
         public event EventHandler OnRequestClose;
         private readonly string fileDialogFilter;
         private readonly IUserSettingsClient userSettings;
+        private readonly ILibraryManagerClient libraryManager;
+
         //private readonly LibraryViewModel libraryVm;
         private readonly MainWindow appWindow;
         private readonly LibraryUtil libraryUtil;
 
         public AddWallpaperViewModel(
             IUserSettingsClient userSettings,
+            ILibraryManagerClient libraryManager,
             LibraryUtil libraryUtil,
             MainWindow appWindow)
         {
             this.userSettings = userSettings;
+            this.libraryManager = libraryManager;
             //this.libraryVm = libraryVm;
             this.libraryUtil = libraryUtil;
             this.appWindow = appWindow;
@@ -162,7 +166,7 @@ namespace Lively.UI.Wpf.ViewModels
                 {
                     try
                     {
-                       var item = await libraryUtil.AddWallpaperFile(openFileDlg.FileName);
+                        var item = await libraryManager.AddWallpaperFile(openFileDlg.FileName);
                         if (item.LivelyInfo.IsAbsolutePath)
                         {
                             NewWallpaper = item;

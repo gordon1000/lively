@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Mappers\" />
     <Folder Include="Plugins\" />
   </ItemGroup>
 
@@ -39,6 +40,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="GrpcDotNetNamedPipes" Version="1.4.4" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
@@ -52,6 +55,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lively.Grpc.Common\Lively.Grpc.Common.csproj" />
+    <ProjectReference Include="..\Lively.Mapper\Lively.Mapper.csproj" />
     <ProjectReference Include="..\Lively.Models\Lively.Models.csproj" />
   </ItemGroup>
 

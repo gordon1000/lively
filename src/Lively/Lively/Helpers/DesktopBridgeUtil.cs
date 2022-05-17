@@ -38,5 +38,37 @@ namespace Lively.Helpers
             }
             return packagePath;
         }
+
+        public static async Task OpenFolder(string path)
+        {
+            if (!Constants.ApplicationType.IsMSIX)
+            {
+                FileOperations.OpenFolder(path);
+                return;
+            }
+
+            try
+            {
+                var packagePath = path;
+                var localFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
+                var packageAppData = Path.Combine(localFolder, "Local", "Lively Wallpaper");
+                if (path.Length > Constants.CommonPaths.AppDataDir.Count() + 1)
+                {
+                    var tmp = Path.Combine(packageAppData, path.Remove(0, Constants.CommonPaths.AppDataDir.Count() + 1));
+                    if (File.Exists(tmp) || Directory.Exists(tmp))
+                    {
+                        packagePath = tmp;
+                    }
+                }
+
+                var folder = await Windows.Storage.StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(packagePath));
+                await Windows.System.Launcher.LaunchFolderAsync(folder);
+            }
+            catch
+            {
+                //ApplicationData is unreliable.
+                //Issue: https://github.com/microsoft/WindowsAppSDK/issues/101
+            }
+        }
     }
 }

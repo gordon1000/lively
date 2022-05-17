@@ -4,14 +4,20 @@ import "google/protobuf/empty.proto";
 
 service LibraryService
 {
-	rpc DeleteWallpaper (LibraryModel) returns (google.protobuf.Empty);
-	rpc ExportWallpaper (ExportWallpaperRequest) returns (google.protobuf.Empty);
-	rpc ShowWallpaperOnDisk (LibraryModel) returns (google.protobuf.Empty);
 	rpc AddWallpaperFile (AddWallpaperFileRequest) returns (LibraryModel);
 	rpc AddWallpaperLink (AddWallpaperLinkRequest) returns (LibraryModel);
 	rpc AddWallpapers (AddWallpapersRequest) returns (stream Progress);
 	rpc CancelAddWallpaper (google.protobuf.Empty) returns (google.protobuf.Empty);
+
+	rpc DeleteWallpaper (LibraryModel) returns (google.protobuf.Empty);
+
+	rpc ExportWallpaper (ExportWallpaperRequest) returns (google.protobuf.Empty);
+
 	rpc SearchWallpapers (SearchWallpapersRequest) returns (stream SearchWallpapersResponse);
+
+	rpc ShowWallpaperOnDisk (LibraryModel) returns (google.protobuf.Empty);
+
+	rpc SubscribeLibraryCollectionChanged (google.protobuf.Empty) returns (stream LibraryCollectionChangedResponse);
 }
 
 message ExportWallpaperRequest
@@ -115,4 +121,9 @@ message LivelyInfoModel
 	string license = 10;
 	string preview = 11;
 	string thumbnail = 12;
+}
+
+message LibraryCollectionChangedResponse
+{
+	repeated LibraryModel libraryItem = 1;
 }

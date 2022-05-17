@@ -31,6 +31,10 @@ using Lively.Models;
 using Lively.Common.Helpers;
 using Lively.Helpers.Theme;
 using Microsoft.Win32;
+using Lively.Grpc.Common.Proto.Library;
+using System.Reflection;
+using Lively.Mappers;
+using Lively.Core.Library;
 
 namespace Lively
 {
@@ -192,6 +196,7 @@ namespace Lively
                 .AddSingleton<IDesktopCore, WinDesktopCore>()
                 .AddSingleton<IWatchdogService, WatchdogProcess>()
                 .AddSingleton<IDisplayManager, DisplayManager>()
+                .AddSingleton<ILibraryManager, LibraryManager>()
                 .AddSingleton<IScreensaverService, ScreensaverService>()
                 .AddSingleton<IPlayback, Playback>()
                 .AddSingleton<IRunnerService, RunnerService>()
@@ -202,6 +207,7 @@ namespace Lively
                 .AddSingleton<WndProcMsgWindow>()
                 .AddSingleton<WinDesktopCoreServer>()
                 .AddSingleton<DisplayManagerServer>()
+                .AddSingleton<LibraryServer>()
                 .AddSingleton<UserSettingsServer>()
                 .AddSingleton<CommandsServer>()
                 .AddSingleton<AppUpdateServer>()
@@ -223,6 +229,7 @@ namespace Lively
                     loggingBuilder.AddNLog("Nlog.config");
                 })
                 */
+                .AddAutoMapper(typeof(GrpcModelsProfile))
                 .BuildServiceProvider();
 
             return provider;
@@ -234,6 +241,7 @@ namespace Lively
             DesktopService.BindService(server.ServiceBinder, Services.GetRequiredService<WinDesktopCoreServer>());
             SettingsService.BindService(server.ServiceBinder, Services.GetRequiredService<UserSettingsServer>());
             DisplayService.BindService(server.ServiceBinder, Services.GetRequiredService<DisplayManagerServer>());
+            LibraryService.BindService(server.ServiceBinder, Services.GetRequiredService<LibraryServer>());
             CommandsService.BindService(server.ServiceBinder, Services.GetRequiredService<CommandsServer>());
             UpdateService.BindService(server.ServiceBinder, Services.GetRequiredService<AppUpdateServer>());
             server.Start();

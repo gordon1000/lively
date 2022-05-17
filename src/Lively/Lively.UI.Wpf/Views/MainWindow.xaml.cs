@@ -31,13 +31,19 @@ namespace Lively.UI.Wpf.Views
 
         private readonly IUserSettingsClient userSettings;
         private readonly IDesktopCoreClient desktopCore;
+        private readonly ILibraryManagerClient libraryManager;
         private readonly LibraryViewModel libraryVm;
         private readonly LibraryUtil libraryUtil;
 
-        public MainWindow(IUserSettingsClient userSettings, IDesktopCoreClient desktopCore, LibraryUtil libraryUtil, LibraryViewModel libraryVm)
+        public MainWindow(IUserSettingsClient userSettings, 
+            IDesktopCoreClient desktopCore, 
+            ILibraryManagerClient libraryManager,
+            LibraryUtil libraryUtil, 
+            LibraryViewModel libraryVm)
         {
             this.userSettings = userSettings;
             this.desktopCore = desktopCore;
+            this.libraryManager = libraryManager;
             this.libraryUtil = libraryUtil;
             this.libraryVm = libraryVm;
 
@@ -126,7 +132,7 @@ namespace Lively.UI.Wpf.Views
 
                     try
                     {
-                        await libraryUtil.AddWallpaperFile(item);
+                        await libraryManager.AddWallpaperFile(item);
                     }
                     catch (Exception ex)
                     {

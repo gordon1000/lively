@@ -3,6 +3,7 @@ using Lively.Common.Helpers;
 using Lively.Common.Helpers.Pinvoke;
 using Lively.Common.Services;
 using Lively.Grpc.Client;
+using Lively.Mappers;
 using Lively.UI.Wpf.Factories;
 using Lively.UI.Wpf.Helpers;
 using Lively.UI.Wpf.ViewModels;
@@ -104,6 +105,7 @@ namespace Lively.UI.Wpf
                 .AddSingleton<IDesktopCoreClient, WinDesktopCoreClient>()
                 .AddSingleton<IUserSettingsClient, UserSettingsClient>()
                 .AddSingleton<IDisplayManagerClient, DisplayManagerClient>()
+                .AddSingleton<ILibraryManagerClient, LibraryManagerClient>()
                 .AddSingleton<ICommandsClient, CommandsClient>()
                 .AddSingleton<IAppUpdaterService, GithubUpdaterService>()
                 .AddSingleton<MainWindow>()
@@ -118,6 +120,8 @@ namespace Lively.UI.Wpf
                 .AddTransient<ScreenLayoutViewModel>()
                 .AddTransient<ApplicationRulesViewModel>()
                 .AddTransient<IApplicationsRulesFactory, ApplicationsRulesFactory>()
+                //
+                .AddAutoMapper(typeof(GrpcModelsProfile))
                 .BuildServiceProvider();
 
             return provider;

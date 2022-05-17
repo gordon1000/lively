@@ -39,7 +39,7 @@ namespace Lively.Core.Library
             }
         }
 
-        public LibraryManager(ILibraryManager libraryManager, IUserSettingsService userSettings, IDesktopCore desktopCore)
+        public LibraryManager(IUserSettingsService userSettings, IDesktopCore desktopCore)
         {
             this.userSettings = userSettings;
             this.desktopCore = desktopCore;
@@ -51,7 +51,7 @@ namespace Lively.Core.Library
             {
                 var libItem = await ScanWallpaperFolder(folderPath);
                 var index = processing ? 0 : BinarySearch(_libraryItems, libItem.Title);
-                libItem.DataType = processing ? LibraryItemType.processing : LibraryItemType.ready;
+                //libItem.DataType = processing ? LibraryItemType.processing : LibraryItemType.ready;
                 _libraryItems.Insert(index, libItem);
                 return libItem;
             }
@@ -66,7 +66,7 @@ namespace Lively.Core.Library
         {
             if (File.Exists(Path.Combine(folderPath, "LivelyInfo.json")))
             {
-                LivelyInfoModel info = await JsonStorage<LivelyInfoModel>.LoadData(Path.Combine(folderPath, "LivelyInfo.json"));
+                LivelyInfoModel info = JsonStorage<LivelyInfoModel>.LoadData(Path.Combine(folderPath, "LivelyInfo.json"));
                 return info != null ?
                     new LibraryModel(info, folderPath, LibraryItemType.ready, userSettings.Settings.UIMode != LivelyGUIState.lite) :
                     throw new Exception("Corrupted wallpaper metadata");
@@ -151,10 +151,14 @@ namespace Lively.Core.Library
                         Preview = string.Empty,
                         Thumbnail = string.Empty,
                         Arguments = string.Empty,
+                        AppVersion = string.Empty,
+                        Author = string.Empty,
+                        Desc = string.Empty,
+                        License = string.Empty
                     };
 
                     //TODO generate livelyproperty for gif etc..
-                    await JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(dir, "LivelyInfo.json"), data);
+                    JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(dir, "LivelyInfo.json"), data);
                     return await AddWallpaper(dir, true);
                 }
             }
@@ -175,10 +179,14 @@ namespace Lively.Core.Library
                 Preview = string.Empty,
                 Thumbnail = string.Empty,
                 Arguments = string.Empty,
+                AppVersion = string.Empty,
+                Author = string.Empty,
+                Desc = string.Empty,
+                License = string.Empty
             };
 
             //TODO generate livelyproperty for gif etc..
-            await JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(dir, "LivelyInfo.json"), data);
+            JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(dir, "LivelyInfo.json"), data);
             return await AddWallpaper(dir, true);
         }
 
@@ -204,7 +212,7 @@ namespace Lively.Core.Library
                     if (wallpaper.DataType == LibraryItemType.processing)
                     {
                         wallpaper.DataType = LibraryItemType.multiImport;
-                        await desktopCore.SetWallpaper(wallpaper, userSettings.Settings.SelectedDisplay);
+                        desktopCore.SetWallpaper(wallpaper, userSettings.Settings.SelectedDisplay);
                         await tcs.Task;
                         tcs = new TaskCompletionSource<bool>();
                     }
@@ -229,10 +237,10 @@ namespace Lively.Core.Library
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public async Task WallpaperDelete(ILibraryModel obj)
+        public async Task DeleteWallpaper(ILibraryModel obj)
         {
             //close if running.
-            await desktopCore.CloseWallpaper(obj, true);
+            desktopCore.CloseWallpaper(obj, true);
             //delete wp folder.      
             var success = await FileOperations.DeleteDirectoryAsync(obj.LivelyInfoFolderPath, 1000, 4000);
 
@@ -265,7 +273,7 @@ namespace Lively.Core.Library
             }
         }
 
-        public Task WallpaperExport(ILibraryModel libraryItem, string saveFile)
+        public Task ExportWallpaper(ILibraryModel libraryItem, string saveFile)
         {
             return Task.Run(async () =>
             {
@@ -301,7 +309,7 @@ namespace Lively.Core.Library
                             info.Preview = Path.GetFileName(libraryItem.PreviewClipPath);
                         }
 
-                        await JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(tmpDir, "LivelyInfo.json"), info);
+                        JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(tmpDir, "LivelyInfo.json"), info);
                         ZipCreate.CreateZip(saveFile, new List<string>() { tmpDir });
                     }
                     finally
@@ -346,7 +354,7 @@ namespace Lively.Core.Library
                             info.Preview = Path.GetFileName(libraryItem.PreviewClipPath);
                         }
 
-                        await JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(tmpDir, "LivelyInfo.json"), info);
+                        JsonStorage<LivelyInfoModel>.StoreData(Path.Combine(tmpDir, "LivelyInfo.json"), info);
                         List<string> metaData = new List<string>();
                         metaData.AddRange(Directory.GetFiles(tmpDir, "*.*", SearchOption.TopDirectoryOnly));
                         var fileData = new List<ZipCreate.FileData>
@@ -371,12 +379,12 @@ namespace Lively.Core.Library
             });
         }
 
-        public async Task WallpaperShowOnDisk(ILibraryModel libraryItem)
+        public async Task ShowWallpaperOnDisk(ILibraryModel libraryItem)
         {
             string folderPath =
                 libraryItem.LivelyInfo.Type == WallpaperType.url || libraryItem.LivelyInfo.Type == WallpaperType.videostream
                 ? libraryItem.LivelyInfoFolderPath : libraryItem.FilePath;
-            await DesktopBridgeUtil.OpenFolder(folderPath);
+            DesktopBridgeUtil.OpenFolder(folderPath);
         }
 
 
